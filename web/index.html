@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tinto · el compilador que se explica solo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23261710'/%3E%3Cpath d='M12 26h34v12a14 14 0 0 1-14 14h-6a14 14 0 0 1-14-14z' fill='%23f6ecd9'/%3E%3Cellipse cx='29' cy='26' rx='17' ry='4' fill='%23f0a23b'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <!-- Barra de arriba: la marca y el interruptor de modo -->
+  <header class="barra">
+    <div class="marca">
+      <svg class="taza" viewBox="0 0 64 64" aria-hidden="true">
+        <path class="vapor v1" d="M21 17c-4-4 3-6-1-11"/>
+        <path class="vapor v2" d="M30 17c-4-4 3-6-1-11"/>
+        <path class="vapor v3" d="M39 17c-4-4 3-6-1-11"/>
+        <path class="taza-cuerpo" d="M10 26h38v12a15 15 0 0 1-15 15h-8a15 15 0 0 1-15-15z"/>
+        <path class="taza-asa" d="M48 29h3a6.5 6.5 0 0 1 0 13h-5"/>
+        <ellipse class="taza-cafe" cx="29" cy="26" rx="19" ry="4"/>
+        <ellipse class="taza-plato" cx="29" cy="58" rx="24" ry="3.2"/>
+      </svg>
+      <div>
+        <h1>Tinto</h1>
+        <p class="lema">Un lenguaje con sabor a café, y un compilador que se explica solo</p>
+      </div>
+    </div>
+
+    <!-- Interruptor: paso a paso (apagado) o automático (encendido) -->
+    <div class="modo">
+      <button type="button" class="modo-etiqueta activa" id="modo-paso">Paso a paso</button>
+      <button type="button" class="interruptor" id="modo" role="switch" aria-checked="false" aria-label="Modo automático">
+        <span class="interruptor-bola"></span>
+      </button>
+      <button type="button" class="modo-etiqueta" id="modo-auto">Automático</button>
+    </div>
+  </header>
+
+  <main class="principal">
+
+    <!-- IZQUIERDA: el chat -->
+    <section class="zona chat" aria-labelledby="t-chat">
+      <h2 class="zona-titulo" id="t-chat">Chat</h2>
+      <p class="aviso-ia"><strong>La IA solo traduce.</strong> El compilador es el que revisa.</p>
+      <div id="historial" class="historial" aria-live="polite"></div>
+      <div class="ejemplos">
+        <h3>Ejemplos guardados <span>(sin IA)</span></h3>
+        <div id="lista-ejemplos" class="lista-ejemplos"></div>
+      </div>
+      <form id="form-chat" class="form-chat" autocomplete="off">
+        <!-- Aviso breve (mensaje vacío); flota encima de la caja para no mover nada -->
+        <p id="aviso-chat" class="aviso-chat" role="status" hidden></p>
+        <textarea id="texto-chat" rows="2" maxlength="300" placeholder="Dile al robot qué dibujar…" aria-label="Mensaje para la IA"></textarea>
+        <button type="submit" id="btn-enviar" class="btn primario">Enviar</button>
+      </form>
+    </section>
+
+    <!-- CENTRO -->
+    <div class="centro">
+      <!-- Arriba: el editor con el código Tinto -->
+      <section class="zona editor-zona" aria-labelledby="t-editor">
+        <div class="editor-barra">
+          <h2 class="zona-titulo" id="t-editor">Código Tinto</h2>
+          <div class="acciones">
+            <button type="button" id="btn-siguiente" class="btn secundario" disabled>
+              <span>Siguiente fase</span><small id="siguiente-nombre"></small>
+            </button>
+            <button type="button" id="btn-compilar" class="btn primario">Compilar</button>
+          </div>
+        </div>
+        <div class="editor-caja">
+          <div class="banda" id="banda" hidden></div>
+          <div class="margen" id="margen" aria-hidden="true"><div id="numeros"></div></div>
+          <textarea id="codigo" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"
+            aria-label="Código Tinto" aria-describedby="ayuda-editor"
+            placeholder="Escribe aquí tu código Tinto. Por ejemplo:&#10;pintar rojo&#10;avanzar 3"></textarea>
+          <!-- Ayuda del teclado: se ve cuando el cursor está en el editor -->
+          <p id="ayuda-editor" class="editor-ayuda">Tab sangra · Esc y luego Tab sale del editor</p>
+        </div>
+      </section>
+
+      <!-- Abajo: la línea de personajes y el panel del elegido -->
+      <section class="zona fases-zona" aria-label="Las cinco fases del compilador">
+        <div id="linea-personajes" class="linea-personajes"></div>
+        <div id="panel" class="panel"></div>
+      </section>
+    </div>
+
+    <!-- DERECHA: el tablero y los retos -->
+    <aside class="derecha">
+      <section class="zona tablero-zona" aria-labelledby="t-tablero">
+        <h2 class="zona-titulo" id="t-tablero">Tablero</h2>
+        <div id="tablero" class="tablero" role="img" aria-label="Tablero de 10 por 10 con el robot"></div>
+        <p id="estado-robot" class="estado-robot" aria-live="off"></p>
+        <div class="controles">
+          <button type="button" id="btn-reiniciar" class="btn secundario">↺ Reiniciar</button>
+          <label class="velocidad">
+            <span>Velocidad</span>
+            <input type="range" id="velocidad" min="1" max="5" value="3" aria-label="Velocidad del robot">
+            <span class="velocidad-marcas"><small>Lenta</small><small>Rápida</small></span>
+          </label>
+        </div>
+      </section>
+
+      <section class="zona retos-zona" aria-labelledby="t-retos">
+        <h2 class="zona-titulo" id="t-retos">Retos</h2>
+        <div id="lista-retos" class="lista-retos"></div>
+      </section>
+    </aside>
+
+  </main>
+
+  <!-- Aviso que aparece unos segundos (por ejemplo, al cambiar de modo a mitad de una corrida) -->
+  <div id="aviso" class="aviso-flotante" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

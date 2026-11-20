@@ -1,0 +1,14 @@
+{
+  "name": "tinto-compilador",
+  "version": "1.0.0",
+  "description": "Compilador del lenguaje Tinto: mueve un robot virtual con instrucciones en español",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"pruebas/unitarias/*.test.js\"",
+    "start": "node servidor.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0"
+  }
+}

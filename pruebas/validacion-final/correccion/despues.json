@@ -1,0 +1,217 @@
+{
+  "casos": {
+    "sintactico": {
+      "pers": [
+        {
+          "titulo": "El Lector",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Leí tu código y encontré 8 palabras. Por ejemplo, repetir es una palabra reservada y 4 es un número."
+        },
+        {
+          "titulo": "El Gramático",
+          "estadoP": "Error",
+          "estado": "error",
+          "txt": "Las palabras estaban bien escritas, pero al agruparlas en instrucciones me trabé en la línea 1: no siguen el orden que pide Tinto. Sin un árbol completo, no puedo seguir."
+        },
+        {
+          "estado": "espera"
+        },
+        {
+          "estado": "espera"
+        },
+        {
+          "estado": "espera"
+        }
+      ],
+      "pintadas": []
+    },
+    "semantico": {
+      "pers": [
+        {
+          "titulo": "El Lector",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Leí tu código y encontré 2 palabras. Por ejemplo, avanzar es una palabra reservada y 99 es un número."
+        },
+        {
+          "titulo": "El Gramático",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Agrupé las palabras en un árbol: tu programa tiene 1 instrucción y ningún ciclo repetir."
+        },
+        {
+          "titulo": "El Juez",
+          "estadoP": "Error",
+          "estado": "error",
+          "txt": "Tu programa está bien escrito, pero al seguir el recorrido del robot encontré un problema en la línea 1: lo que pides no tiene sentido o no cabe en el tablero. Por eso nadie lo ejecuta."
+        },
+        {
+          "estado": "espera"
+        },
+        {
+          "estado": "espera"
+        }
+      ],
+      "pintadas": []
+    },
+    "lexico": {
+      "pers": [
+        {
+          "titulo": "El Lector",
+          "estadoP": "Error",
+          "estado": "error",
+          "txt": "Fui leyendo tu código letra por letra y me detuve en la línea 1, columna 9: @ no existe en Tinto. Por eso no le pasé nada al Gramático."
+        },
+        {
+          "estado": "espera"
+        },
+        {
+          "estado": "espera"
+        },
+        {
+          "estado": "espera"
+        },
+        {
+          "estado": "espera"
+        }
+      ],
+      "pintadas": []
+    },
+    "cuadrado": {
+      "pers": [
+        {
+          "titulo": "El Lector",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Leí tu código y encontré 11 palabras. Por ejemplo, repetir es una palabra reservada y 4 es un número."
+        },
+        {
+          "titulo": "El Gramático",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Agrupé las palabras en un árbol: tu programa tiene 4 instrucciones y 1 ciclo repetir. Lo que está dentro del repetir cuelga de él."
+        },
+        {
+          "titulo": "El Juez",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Hice 4 revisiones y tu programa pasó todas. Simulé el recorrido: el robot no se sale del tablero de 10×10 y termina en la casilla (0, 0)."
+        },
+        {
+          "titulo": "El Traductor",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Traduje tu programa a 5 instrucciones simples, parecidas a las de una máquina. El repetir de la línea 2 desapareció: ahora es CONTAR 4 al inicio y VOLVER 2 al final, que salta hacia atrás."
+        },
+        {
+          "titulo": "El Ejecutor",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Tu lista tiene 5 instrucciones, pero el repetir ejecuta algunas varias veces: corrí 14 en total. El robot avanzó 12 casillas, pintó 12 y terminó en (0, 0) mirando a la derecha."
+        }
+      ],
+      "pintadas": [
+        "0,0",
+        "1,0",
+        "2,0",
+        "3,0",
+        "0,1",
+        "3,1",
+        "0,2",
+        "3,2",
+        "0,3",
+        "1,3",
+        "2,3",
+        "3,3"
+      ]
+    },
+    "L": {
+      "pers": [
+        {
+          "titulo": "El Lector",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Leí tu código y encontré 8 palabras. Por ejemplo, girar es una palabra reservada y 5 es un número."
+        },
+        {
+          "titulo": "El Gramático",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Agrupé las palabras en un árbol: tu programa tiene 4 instrucciones y ningún ciclo repetir."
+        },
+        {
+          "titulo": "El Juez",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Hice 4 revisiones y tu programa pasó todas. Simulé el recorrido: el robot no se sale del tablero de 10×10 y termina en la casilla (3, 5)."
+        },
+        {
+          "titulo": "El Traductor",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Traduje tu programa a 4 instrucciones simples, parecidas a las de una máquina. Por ejemplo, la línea 1 (girar derecha) se volvió GIRAR DER."
+        },
+        {
+          "titulo": "El Ejecutor",
+          "estadoP": "Aprobado",
+          "estado": "aprobado",
+          "txt": "Ejecuté las 4 instrucciones una por una. El robot avanzó 8 casillas, pintó 8 y terminó en (3, 5) mirando a la derecha."
+        }
+      ],
+      "pintadas": [
+        "0,1",
+        "0,2",
+        "0,3",
+        "0,4",
+        "0,5",
+        "1,5",
+        "2,5",
+        "3,5"
+      ]
+    }
+  },
+  "vig": {
+    "pageerrors": [],
+    "consola": []
+  },
+  "reto": {
+    "titulo": "Dibuja una letra: prueba L, T, H o E",
+    "detalle": [
+      "Con líneas rectas, dibuja tu letra en el tablero.",
+      "Pista: La L: girar derecha, avanzar 5, girar izquierda, avanzar 3 (baja y luego va a la derecha). Cuidado: el robot no puede salirse."
+    ],
+    "cortes": [
+      {
+        "sw": 327,
+        "cw": 326,
+        "sh": 27,
+        "ch": 27
+      },
+      {
+        "sw": 324,
+        "cw": 324,
+        "sh": 19,
+        "ch": 19
+      },
+      {
+        "sw": 324,
+        "cw": 324,
+        "sh": 56,
+        "ch": 56
+      }
+    ],
+    "caja": {
+      "x": 1058.609375,
+      "y": 596.046875,
+      "width": 382.40625,
+      "height": 123.15625
+    },
+    "zona": {
+      "bottom": 787.203125,
+      "h": 800,
+      "sw": 410,
+      "cw": 410
+    }
+  }
+}

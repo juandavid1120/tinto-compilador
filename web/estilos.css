@@ -1,0 +1,886 @@
+/* estilos.css
+   Tema "café tinto": fondo de espresso, texto crema y un acento caramelo.
+   Todo está pensado para verse en la pantalla de un portátil (de 1470×800 a 1280×720)
+   sin hacer scroll de página, con letra grande y alto contraste. En ventanas más
+   pequeñas (o con zoom) el diseño se compacta y, si ya no cabe, la página hace scroll. */
+
+:root {
+  /* Marrones, del más oscuro al más claro */
+  --cafe-950: #160c07;
+  --cafe-900: #1d110b;
+  --cafe-800: #281811;
+  --cafe-700: #36221a;
+  --cafe-600: #4d3125;
+  --cafe-500: #6e4a38;
+
+  /* Cremas (texto) */
+  --crema: #f8eedc;
+  --crema-suave: #dcc8a8;
+  --crema-tenue: #b39b7d;
+
+  /* Acento caramelo */
+  --acento: #f2a64a;
+  --acento-fuerte: #ffbf6b;
+  --acento-oscuro: #3a2209;
+
+  /* Estados de los personajes */
+  --ok: #72d68e;
+  --ok-fondo: rgba(114, 214, 142, 0.13);
+  --error: #ff6f63;
+  --error-fondo: rgba(255, 111, 99, 0.15);
+
+  /* Colores del robot sobre el tablero crema (se distinguen bien entre sí) */
+  --c-rojo: #e0303a;
+  --c-azul: #2f6be0;
+  --c-verde: #1f9d55;
+  --c-amarillo: #f5c518;
+  --c-negro: #1b1410;
+
+  /* Tipos de token */
+  --tk-reservada: #ffb454;
+  --tk-direccion: #7cc4ff;
+  --tk-color: #ff9ec7;
+  --tk-numero: #b8e986;
+  --tk-dospuntos: #c9a8ff;
+
+  /* Barras de scroll: que se vean siempre (en Mac, por defecto, las barras desaparecen hasta que se
+     hace scroll, y así nadie sabe que hay más contenido). */
+  --barra-pulgar: #a47c60;
+  --barra-pista: rgba(255, 255, 255, 0.08);
+
+  --alto-minimo: 44rem;
+  /* Alto que ocupa en la columna derecha todo lo que no es el tablero (cabecera, títulos, controles y los cinco retos). */
+  --resto-derecha: 31rem;
+  /* Alto que usa el diseño: el de la ventana, o el mínimo si la ventana es más baja. */
+  --alto-util: max(100vh, var(--alto-minimo));
+
+  --radio: 16px;
+  --fuente: ui-rounded, "SF Pro Rounded", "Avenir Next", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fuente-titulo: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --fuente-codigo: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  /* La letra crece con la pantalla: 15 px a 1280×720, 16 px a 1470×800 y ~17 px a 1440×900.
+     Se mide con el ancho y también con el alto: si la ventana es baja, la letra no puede crecer. */
+  font-size: clamp(15px, min(1.2vw, 2vh), 18px);
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  /* Con una ventana normal la página no hace scroll (los paneles internos sí). Si la ventana
+     es más baja que esto (por ejemplo con zoom de 150 %), el diseño no se sigue apretando:
+     la página hace scroll y todo sigue alcanzable. */
+  min-height: var(--alto-minimo);
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  font-family: var(--fuente);
+  color: var(--crema);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(242, 166, 74, 0.13), transparent 60%),
+    radial-gradient(900px 500px at 100% 110%, rgba(110, 74, 56, 0.35), transparent 60%),
+    var(--cafe-900);
+}
+
+/* Barras de scroll de todos los recuadros: anchas, con pista y pulgar de color, y siempre visibles.
+   (Chrome y Safari usan ::-webkit-scrollbar; Firefox usa scrollbar-color.) */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--barra-pista); border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: var(--barra-pulgar); border-radius: 8px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--acento); background-clip: padding-box; }
+::-webkit-scrollbar-corner { background: transparent; }
+@supports not selector(::-webkit-scrollbar) {
+  * { scrollbar-width: thin; scrollbar-color: var(--barra-pulgar) var(--barra-pista); }
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+h1, h2, h3, p { margin: 0; }
+code {
+  font-family: var(--fuente-codigo);
+  background: rgba(242, 166, 74, 0.18);
+  color: var(--acento-fuerte);
+  padding: 0 0.3em;
+  border-radius: 5px;
+}
+
+:focus-visible { outline: 3px solid var(--acento-fuerte); outline-offset: 2px; }
+
+/* ======================================================================
+   Barra de arriba
+   ====================================================================== */
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 1rem 0.5rem;
+}
+
+.marca { display: flex; align-items: center; gap: 0.75rem; min-width: 0; }
+.marca h1 {
+  font-family: var(--fuente-titulo);
+  font-size: 2.1rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--crema);
+}
+.lema { color: var(--crema-suave); font-size: 0.9rem; margin-top: 0.15rem; }
+
+.taza { width: 2.9rem; height: 2.9rem; flex: none; overflow: visible; }
+.taza-cuerpo { fill: var(--crema); }
+.taza-asa { fill: none; stroke: var(--crema); stroke-width: 5; stroke-linecap: round; }
+.taza-cafe { fill: var(--acento); }
+.taza-plato { fill: var(--cafe-500); }
+.vapor { fill: none; stroke: var(--crema-suave); stroke-width: 2.6; stroke-linecap: round; opacity: 0; animation: vapor 3.2s ease-in-out infinite; }
+.v2 { animation-delay: 0.9s; }
+.v3 { animation-delay: 1.8s; }
+@keyframes vapor {
+  0% { opacity: 0; transform: translateY(6px); }
+  40% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-5px); }
+}
+
+/* Interruptor de modo */
+.modo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--cafe-800);
+  border: 1px solid var(--cafe-600);
+  border-radius: 999px;
+}
+.modo-etiqueta {
+  background: none;
+  border: 0;
+  padding: 0.1rem 0.2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--crema-tenue);
+}
+.modo-etiqueta.activa { color: var(--acento-fuerte); }
+.interruptor {
+  position: relative;
+  width: 3.2rem;
+  height: 1.7rem;
+  border-radius: 999px;
+  border: 2px solid var(--cafe-500);
+  background: var(--cafe-950);
+  padding: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+.interruptor-bola {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.7rem - 8px);
+  height: calc(1.7rem - 8px);
+  border-radius: 50%;
+  background: var(--crema);
+  transition: transform 0.2s;
+}
+.interruptor[aria-checked="true"] { background: var(--acento); border-color: var(--acento-fuerte); }
+.interruptor[aria-checked="true"] .interruptor-bola { transform: translateX(1.5rem); background: var(--acento-oscuro); }
+
+/* ======================================================================
+   Estructura: tres columnas
+   ====================================================================== */
+
+.principal {
+  display: grid;
+  grid-template-columns: clamp(250px, 20vw, 320px) minmax(0, 1fr) clamp(330px, 28vw, 440px);
+  gap: 0.7rem;
+  padding: 0 0.8rem 0.8rem;
+  min-height: 0;
+}
+
+.centro, .derecha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-height: 0;
+  min-width: 0;
+}
+
+.zona {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: linear-gradient(180deg, var(--cafe-800), #231510);
+  border: 1px solid var(--cafe-600);
+  border-radius: var(--radio);
+  padding: 0.7rem 0.85rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+.zona-titulo {
+  font-family: var(--fuente-titulo);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--acento-fuerte);
+  letter-spacing: 0.02em;
+}
+
+/* ======================================================================
+   Botones
+   ====================================================================== */
+
+.btn {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: transform 0.08s, background 0.15s, border-color 0.15s, opacity 0.15s;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn.primario { background: var(--acento); color: var(--acento-oscuro); border-color: var(--acento-fuerte); }
+.btn.primario:hover:not(:disabled) { background: var(--acento-fuerte); }
+.btn.secundario { background: var(--cafe-700); color: var(--crema); border-color: var(--cafe-500); }
+.btn.secundario:hover:not(:disabled) { background: var(--cafe-600); }
+.btn.acento { background: transparent; color: var(--acento-fuerte); border-color: var(--acento); }
+.btn.acento:hover { background: rgba(242, 166, 74, 0.15); }
+.btn.pequeno { padding: 0.3rem 0.75rem; font-size: 0.9rem; }
+
+/* ======================================================================
+   Chat
+   ====================================================================== */
+
+.chat { gap: 0.5rem; }
+.aviso-ia {
+  font-size: 0.85rem;
+  line-height: 1.3;
+  color: var(--crema);
+  background: rgba(242, 166, 74, 0.13);
+  border-left: 4px solid var(--acento);
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+}
+.aviso-ia strong { color: var(--acento-fuerte); }
+
+.historial {
+  flex: 1;
+  min-height: 3rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-right: 0.2rem;
+}
+.mensaje {
+  max-width: 94%;
+  padding: 0.45rem 0.65rem;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.mensaje.usuario { align-self: flex-end; background: var(--crema); color: #2a170d; border-bottom-right-radius: 4px; font-weight: 600; }
+.mensaje.ia { align-self: flex-start; background: var(--cafe-700); border: 1px solid var(--cafe-500); border-bottom-left-radius: 4px; }
+.mensaje.aviso { align-self: stretch; max-width: 100%; background: var(--error-fondo); border: 1px solid var(--error); color: #ffd9d4; }
+.mensaje-codigo {
+  margin: 0.35rem 0 0;
+  padding: 0.4rem 0.55rem;
+  background: var(--cafe-950);
+  border-radius: 8px;
+  font-family: var(--fuente-codigo);
+  font-size: 0.85rem;
+  color: var(--crema);
+  white-space: pre;
+  overflow-x: auto;
+}
+.mensaje.cargando { display: flex; align-items: center; gap: 0.55rem; color: var(--crema-suave); }
+.puntos { display: inline-flex; gap: 4px; }
+.puntos i { width: 8px; height: 8px; border-radius: 50%; background: var(--acento); animation: latido 1s infinite ease-in-out; }
+.puntos i:nth-child(2) { animation-delay: 0.15s; }
+.puntos i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes latido { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+.ejemplos h3 { font-size: 0.9rem; color: var(--crema-suave); margin-bottom: 0.3rem; font-weight: 700; }
+.ejemplos h3 span { color: var(--crema-tenue); font-weight: 500; }
+.lista-ejemplos { display: flex; flex-direction: column; gap: 0.3rem; }
+.ejemplo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  text-align: left;
+  padding: 0.35rem 0.6rem;
+  background: var(--cafe-700);
+  border: 1px solid var(--cafe-500);
+  border-left: 5px solid var(--ok);
+  border-radius: 10px;
+}
+.ejemplo:hover { background: var(--cafe-600); }
+.ejemplo[data-fase="lexico"], .ejemplo[data-fase="sintactico"], .ejemplo[data-fase="semantico"] { border-left-color: var(--error); }
+.ejemplo-frase { font-size: 0.9rem; font-weight: 600; line-height: 1.2; }
+.ejemplo-etiqueta { font-size: 0.72rem; color: var(--crema-tenue); white-space: nowrap; display: none; }
+
+.form-chat { position: relative; display: flex; gap: 0.4rem; align-items: stretch; }
+.form-chat textarea {
+  flex: 1;
+  height: 3.4rem;
+  min-width: 0;
+  resize: none;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  color: var(--crema);
+  background: var(--cafe-950);
+  border: 2px solid var(--cafe-500);
+  border-radius: 12px;
+  padding: 0.35rem 0.6rem;
+}
+.form-chat textarea:focus { border-color: var(--acento); outline: none; }
+/* Esperando a la IA: la caja y el botón se ven apagados. */
+.form-chat textarea:disabled { opacity: 0.5; cursor: not-allowed; border-style: dashed; }
+/* Mensaje vacío: borde rojo y un aviso que flota encima de la caja (no mueve nada). */
+.form-chat textarea.con-aviso { border-color: var(--error); }
+.aviso-chat {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 0.35rem);
+  z-index: 3;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffd9d4;
+  background: #4a1f1b;
+  border: 1px solid var(--error);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.aviso-chat[hidden] { display: none; }
+.form-chat .btn { padding: 0 0.8rem; }
+
+/* ======================================================================
+   Editor
+   ====================================================================== */
+
+.editor-zona { flex: 0 0 clamp(170px, 35%, 290px); gap: 0.4rem; }
+.editor-barra { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.acciones { display: flex; gap: 0.5rem; }
+#btn-siguiente { display: flex; align-items: baseline; gap: 0.4rem; }
+#btn-siguiente small { font-size: 0.78rem; font-weight: 600; color: var(--acento-fuerte); }
+#btn-siguiente small:empty { display: none; }
+#btn-compilar { padding-inline: 1.4rem; }
+
+.editor-caja {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  background: var(--cafe-950);
+  border: 2px solid var(--cafe-500);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: var(--fuente-codigo);
+  font-size: 1.12rem;
+  line-height: 1.5rem;
+}
+.editor-caja:focus-within { border-color: var(--acento); }
+/* Pista del teclado: solo se ve cuando el cursor está en el editor. */
+.editor-ayuda {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.3rem;
+  z-index: 2;
+  padding: 0.1rem 0.5rem;
+  font-family: var(--fuente);
+  font-size: 0.74rem;
+  line-height: 1.3;
+  color: var(--crema-suave);
+  background: rgba(22, 12, 7, 0.9);
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.editor-caja:focus-within .editor-ayuda { opacity: 1; }
+/* Aviso que aparece unos segundos abajo y al centro. */
+.aviso-flotante {
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  transform: translateX(-50%);
+  z-index: 20;
+  max-width: min(36rem, 92vw);
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--acento-oscuro);
+  background: var(--acento-fuerte);
+  border: 2px solid var(--acento);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  animation: aparece 0.25s ease-out;
+}
+.aviso-flotante[hidden] { display: none; }
+.margen {
+  flex: none;
+  width: 2.6rem;
+  overflow: hidden;
+  padding-top: 0.45rem;
+  text-align: right;
+  color: var(--crema-tenue);
+  background: rgba(255, 255, 255, 0.03);
+  border-right: 1px solid var(--cafe-600);
+  z-index: 1;
+}
+.numero { padding-right: 0.6rem; height: 1.5rem; }
+.numero.con-error { color: var(--error); font-weight: 700; }
+#codigo {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--crema);
+  font: inherit;
+  line-height: inherit;
+  padding: 0.45rem 0.8rem;
+  white-space: pre;
+  overflow: auto;
+  tab-size: 2;
+  z-index: 1;
+  caret-color: var(--acento-fuerte);
+}
+#codigo::placeholder { color: var(--crema-tenue); opacity: 0.7; }
+/* La franja roja que marca la línea del error va detrás del texto. */
+.banda {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: var(--error-fondo);
+  border-top: 1px solid var(--error);
+  border-bottom: 1px solid var(--error);
+  z-index: 0;
+}
+.banda::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--error); }
+.banda[hidden] { display: none; }
+
+/* ======================================================================
+   Personajes
+   ====================================================================== */
+
+.fases-zona { flex: 1; gap: 0.55rem; }
+.linea-personajes { display: flex; align-items: stretch; justify-content: space-between; gap: 0.2rem; }
+
+.flecha { flex: none; display: grid; place-items: center; width: 1.3rem; color: var(--cafe-500); transition: color 0.3s; }
+.flecha svg { width: 1.3rem; height: 1.3rem; }
+.flecha.encendida { color: var(--ok); }
+
+.personaje {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.08rem;
+  padding: 0.4rem 0.2rem 0.45rem;
+  text-align: center;
+  background: var(--cafe-900);
+  border: 2px solid var(--cafe-600);
+  border-radius: 14px;
+  transition: background 0.25s, border-color 0.25s, transform 0.2s, opacity 0.25s;
+}
+.personaje-dibujo {
+  font-size: 2rem;
+  line-height: 1.15;
+  filter: grayscale(1) brightness(0.8);
+  transition: filter 0.3s;
+}
+.personaje-nombre { font-weight: 800; font-size: 1rem; line-height: 1.1; }
+.personaje-tecnico { font-size: 0.78rem; line-height: 1.15; color: var(--crema-suave); }
+.personaje-sello {
+  position: absolute;
+  top: -0.55rem;
+  right: -0.4rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  display: none;
+  place-items: center;
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: var(--cafe-950);
+}
+
+/* En espera: apagado */
+.personaje[data-estado="espera"] { opacity: 0.62; }
+/* Aprobado: verde */
+.personaje[data-estado="aprobado"] { background: var(--ok-fondo); border-color: var(--ok); opacity: 1; }
+.personaje[data-estado="aprobado"] .personaje-dibujo { filter: none; }
+.personaje[data-estado="aprobado"] .personaje-sello { display: grid; background: var(--ok); }
+.personaje[data-estado="aprobado"] .personaje-sello::before { content: "✓"; }
+/* Error: rojo */
+.personaje[data-estado="error"] { background: var(--error-fondo); border-color: var(--error); opacity: 1; }
+.personaje[data-estado="error"] .personaje-dibujo { filter: none; }
+.personaje[data-estado="error"] .personaje-sello { display: grid; background: var(--error); }
+.personaje[data-estado="error"] .personaje-sello::before { content: "✗"; }
+
+/* Palpita mientras trabaja */
+.personaje.trabajando { opacity: 1; border-color: var(--acento); animation: palpitar 0.7s ease-in-out infinite; }
+.personaje.trabajando .personaje-dibujo { filter: none; }
+@keyframes palpitar {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(242, 166, 74, 0.5); }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 7px rgba(242, 166, 74, 0); }
+}
+/* El que tiene el panel abierto lleva una flechita hacia abajo */
+.personaje.elegido { transform: translateY(-2px); box-shadow: 0 0 0 2px var(--acento); }
+.personaje.elegido::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.6rem;
+  margin-left: -0.45rem;
+  border: 0.45rem solid transparent;
+  border-top-color: var(--acento);
+  z-index: 2;
+}
+.personaje.sacudir { animation: sacudir 0.35s; }
+@keyframes sacudir { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+/* ======================================================================
+   Panel del personaje elegido
+   ====================================================================== */
+
+.panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--cafe-900);
+  border: 1px solid var(--cafe-600);
+  border-radius: 12px;
+}
+.panel-cab { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.panel-titulo { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.2rem 0.6rem; min-width: 0; }
+.panel-dibujo { font-size: 1.5rem; align-self: center; }
+.panel-titulo h2 { font-family: var(--fuente-titulo); font-size: 1.3rem; }
+.panel-tecnico { color: var(--crema-suave); font-size: 0.9rem; }
+.panel-estado { font-size: 0.78rem; font-weight: 800; padding: 0.1rem 0.55rem; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; align-self: center; }
+.panel-estado.aprobado { background: var(--ok); color: var(--cafe-950); }
+.panel-estado.error { background: var(--error); color: var(--cafe-950); }
+.panel .btn { flex: none; }
+
+.burbuja {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.5rem 0.75rem;
+  background: rgba(242, 166, 74, 0.14);
+  border: 1px solid var(--acento);
+  border-radius: 12px;
+  font-size: 1.02rem;
+  line-height: 1.35;
+  animation: aparece 0.3s ease-out;
+}
+.burbuja[hidden] { display: none; }
+.burbuja-dibujo { font-size: 1.4rem; line-height: 1.2; }
+@keyframes aparece { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+.panel-cuerpo {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.7rem;
+}
+.panel-cuerpo[data-panel="lector"] { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+.panel-cuerpo[data-panel="lector"] .leyenda { grid-column: 1 / -1; }
+.panel-cuerpo.una-col { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+.panel-cuerpo.con-error-panel {
+  grid-template-columns: minmax(0, 1fr);
+  /* La caja del error manda; el código de abajo ocupa lo que sobre, pero nunca menos de unas líneas.
+     Si no cabe todo, el cuerpo hace scroll (así el mensaje y el código siempre se pueden alcanzar). */
+  grid-template-rows: auto minmax(5.2rem, 1fr);
+  overflow-y: auto;
+}
+.col { min-height: 0; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem; overflow-y: auto; }
+.col-titulo { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--crema-suave); font-weight: 700; flex: none; }
+.nota { font-size: 0.85rem; color: var(--crema-suave); }
+/* Esas notas (Traductor y Ejecutor) dicen lo mismo que la burbuja de "¿Qué pasó aquí?":
+   con la burbuja abierta se esconden, para que el panel no pierda espacio. */
+.panel:has(.burbuja:not([hidden])) :is(.nota-repetida, .monitor-aclaracion) { display: none; }
+
+.panel-vacio { margin: auto; text-align: center; max-width: 34rem; display: grid; gap: 0.4rem; }
+.panel-vacio-titulo { font-family: var(--fuente-titulo); font-size: 1.6rem; font-weight: 700; color: var(--acento-fuerte); }
+.panel-vacio-texto { font-size: 1.05rem; color: var(--crema-suave); }
+.panel-vacio.aviso-error .panel-vacio-titulo { color: var(--error); }
+
+/* ---- Código con números de línea ---- */
+.codigo { font-family: var(--fuente-codigo); font-size: 1.05rem; line-height: 1.5; padding: 0.35rem 0; background: var(--cafe-950); border-radius: 10px; }
+.fila { display: flex; padding-right: 0.6rem; border-left: 4px solid transparent; white-space: pre; }
+.fila-numero { flex: none; width: 2rem; text-align: right; padding-right: 0.7rem; color: var(--crema-tenue); user-select: none; }
+.fila.con-error { background: var(--error-fondo); border-left-color: var(--error); }
+.fila.con-error .fila-numero { color: var(--error); font-weight: 700; }
+.fila.con-tono { border-left-color: var(--tono); }
+.fila.resaltada, .instruccion.resaltada { background: color-mix(in srgb, var(--tono) 22%, transparent); }
+.mala { background: var(--error); color: var(--cafe-950); border-radius: 4px; padding: 0 0.1em; font-weight: 700; }
+
+/* ---- Lexemas coloreados por tipo de token ---- */
+.tok-PALABRA_RESERVADA { --tk: var(--tk-reservada); }
+.tok-DIRECCION { --tk: var(--tk-direccion); }
+.tok-COLOR { --tk: var(--tk-color); }
+.tok-NUMERO { --tk: var(--tk-numero); }
+.tok-DOS_PUNTOS { --tk: var(--tk-dospuntos); }
+.lexema {
+  color: var(--tk);
+  background: color-mix(in srgb, var(--tk) 17%, transparent);
+  border-bottom: 2px solid var(--tk);
+  border-radius: 4px;
+  padding: 0 0.12em;
+  font-weight: 600;
+}
+.leyenda { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.chip-leyenda {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  color: var(--tk);
+  background: color-mix(in srgb, var(--tk) 17%, transparent);
+  border: 1px solid var(--tk);
+}
+
+/* ---- Lista de tokens ---- */
+.tokens { display: grid; gap: 2px; font-size: 0.85rem; }
+.token { display: grid; grid-template-columns: 7.6rem minmax(3rem, 1fr) 2.1rem 2.1rem; gap: 0.35rem; align-items: center; padding: 0.12rem 0.4rem; border-radius: 6px; background: var(--cafe-800); }
+.token-encabezado { position: sticky; top: 0; background: var(--cafe-600); color: var(--crema); font-weight: 800; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; z-index: 1; }
+.token-tipo { font-family: var(--fuente-codigo); font-size: 0.74rem; font-weight: 700; color: var(--tk); white-space: nowrap; }
+.token-lexema { font-family: var(--fuente-codigo); font-weight: 700; }
+.token-num { text-align: right; color: var(--crema-suave); font-variant-numeric: tabular-nums; }
+.token.atenuado { opacity: 0.4; }
+
+/* ---- Juez ---- */
+.revisiones { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; align-content: start; overflow-y: auto; }
+.revision {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.08rem;
+  font-weight: 600;
+  padding: 0.28rem 0.8rem;
+  background: var(--ok-fondo);
+  border: 1px solid var(--ok);
+  border-radius: 12px;
+  opacity: 0;
+  animation: aparece 0.4s ease-out forwards;
+}
+.visto { flex: none; display: grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--ok); color: var(--cafe-950); font-weight: 900; }
+
+/* ---- Traductor y Ejecutor ---- */
+.instrucciones { display: grid; gap: 3px; align-content: start; font-family: var(--fuente-codigo); position: relative; }
+.col-instrucciones .instrucciones { overflow: visible; }
+.instruccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.13rem 0.6rem;
+  font-size: 1.05rem;
+  background: var(--cafe-800);
+  border-left: 5px solid var(--cafe-500);
+  border-radius: 6px;
+  white-space: pre;
+}
+.instruccion.con-tono { border-left-color: var(--tono); }
+.instruccion-texto { font-weight: 700; }
+.instruccion-origen { font-family: var(--fuente); font-size: 0.8rem; color: var(--tono); font-weight: 700; }
+.instruccion.actual { background: var(--acento); color: var(--acento-oscuro); border-left-color: var(--acento-fuerte); box-shadow: 0 0 0 2px var(--acento-fuerte); }
+.col-monitor { align-items: flex-start; gap: 0.3rem; }
+.col-monitor .btn.pequeno { padding-block: 0.22rem; }
+.monitor-actual { font-family: var(--fuente-codigo); font-size: 1.9rem; font-weight: 800; color: var(--acento-fuerte); min-height: 2rem; }
+.monitor-detalle { font-size: 0.95rem; line-height: 1.3; color: var(--crema); min-height: 2.6em; }
+.monitor-paso { color: var(--crema-suave); font-size: 0.95rem; font-weight: 700; }
+.monitor-aclaracion { line-height: 1.3; }
+.barra-progreso { width: 100%; height: 0.5rem; background: var(--cafe-700); border-radius: 999px; overflow: hidden; }
+.barra-progreso i { display: block; height: 100%; width: 0; background: var(--acento); transition: width 0.1s linear; }
+
+/* ---- Árbol del Gramático ---- */
+.caja-arbol { min-height: 0; overflow: auto; background: var(--cafe-950); border-radius: 10px; padding: 0.3rem; }
+.arbol { display: block; margin: 0 auto; }
+.arbol-rama { fill: none; stroke: var(--cafe-500); stroke-width: 2.5; opacity: 0; animation: aparece-svg 0.4s ease-out forwards; }
+.arbol-aparece { opacity: 0; animation: aparece-svg 0.4s ease-out forwards; }
+@keyframes aparece-svg { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.arbol-nodo rect { stroke-width: 2; }
+.arbol-titulo { font-family: var(--fuente); font-size: 16px; font-weight: 700; fill: var(--crema); }
+.arbol-detalle { font-family: var(--fuente); font-size: 12px; font-weight: 500; fill: var(--crema-suave); }
+.arbol-nodo.programa rect { fill: var(--cafe-600); stroke: var(--crema-suave); }
+.arbol-nodo.repetir rect { fill: #5a3a10; stroke: var(--tk-reservada); }
+.arbol-nodo.avanzar rect { fill: #1d3a52; stroke: var(--tk-direccion); }
+.arbol-nodo.girar rect { fill: #3d2a5c; stroke: var(--tk-dospuntos); }
+.arbol-nodo.pintar rect { fill: #5a2440; stroke: var(--tk-color); }
+.arbol-punto { stroke: var(--crema); stroke-width: 2; }
+
+/* ---- Error ---- */
+.error-caja { padding: 0.5rem 0.8rem; background: var(--error-fondo); border-left: 6px solid var(--error); border-radius: 10px; display: grid; gap: 0.35rem; }
+.error-explicacion { font-size: 1.4rem; line-height: 1.25; font-weight: 700; }
+.error-mensaje { font-family: var(--fuente-codigo); font-size: 0.82rem; color: var(--crema-suave); }
+.error-codigo { overflow-y: auto; }
+
+/* ======================================================================
+   Derecha: tablero y retos
+   ====================================================================== */
+
+.tablero-zona { flex: none; gap: 0.4rem; align-items: stretch; }
+
+.tablero {
+  position: relative;
+  /* El lado del tablero: lo que quepa en el ancho de la columna, hasta 40 % del alto de la ventana,
+     y menos si la ventana es baja, para que debajo quepan los cinco retos (--resto-derecha es lo que
+     ocupa todo lo demás de la columna). Nunca baja de 11rem. */
+  width: min(100%, max(11rem, min(40vh, calc(var(--alto-util) - var(--resto-derecha)))));
+  aspect-ratio: 1;
+  align-self: center;
+  background: #f4e8cf;
+  border: 4px solid var(--cafe-500);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+.rejilla { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); }
+.celda { position: relative; box-shadow: inset 0 0 0 0.5px rgba(80, 50, 30, 0.35); }
+.celda.inicio::after { content: ""; position: absolute; inset: 30%; border: 2px dashed rgba(80, 50, 30, 0.45); border-radius: 50%; }
+.celda.pintada { animation: tinta 0.35s ease-out; box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25); }
+.celda.c-rojo { background: var(--c-rojo); }
+.celda.c-azul { background: var(--c-azul); }
+.celda.c-verde { background: var(--c-verde); }
+.celda.c-amarillo { background: var(--c-amarillo); }
+.celda.c-negro { background: var(--c-negro); }
+@keyframes tinta { from { transform: scale(0.5); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+
+.robot {
+  position: absolute;
+  width: 10%;
+  height: 10%;
+  padding: 1%; /* el porcentaje se mide sobre el ancho del tablero */
+  transition: left var(--duracion, 150ms) linear, top var(--duracion, 150ms) linear;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+  z-index: 2;
+}
+.robot.sin-transicion, .robot.sin-transicion svg { transition: none; }
+.robot svg { display: block; width: 100%; height: 100%; transition: transform calc(var(--duracion, 150ms) * 1.3) ease-out; }
+.robot-cuerpo { fill: #fff6e4; stroke: #2a170d; stroke-width: 7; }
+.robot-nariz { fill: var(--acento); stroke: #2a170d; stroke-width: 7; stroke-linejoin: round; }
+.robot-pincel { fill: var(--pincel, var(--c-negro)); stroke: #2a170d; stroke-width: 6; }
+
+.estado-robot { text-align: center; font-size: 0.88rem; color: var(--crema-suave); min-height: 1.2em; }
+.estado-robot b { color: var(--crema); margin-left: 0.2rem; }
+.punto-color { display: inline-block; width: 0.8em; height: 0.8em; border-radius: 50%; border: 2px solid var(--crema); vertical-align: -0.05em; }
+
+.controles { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.velocidad { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 0.5rem; align-items: center; flex: 1; min-width: 0; font-weight: 700; font-size: 0.9rem; }
+.velocidad > span:first-child { grid-row: 1 / 3; }
+.velocidad-marcas { display: flex; justify-content: space-between; color: var(--crema-tenue); }
+.velocidad-marcas small { font-size: 0.7rem; font-weight: 600; }
+input[type="range"] { width: 100%; accent-color: var(--acento); margin: 0; height: 1.2rem; }
+
+.retos-zona { flex: 1; gap: 0.45rem; }
+.lista-retos { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 0.35rem; padding-right: 0.2rem; }
+.reto { background: var(--cafe-700); border: 1px solid var(--cafe-500); border-radius: 12px; transition: background 0.2s, border-color 0.2s; flex: none; }
+.reto.hecho { background: var(--ok-fondo); border-color: var(--ok); }
+.reto-cab { display: flex; align-items: center; gap: 0.6rem; padding: 0.26rem 0.6rem; }
+.reto-marca { flex: none; width: 1.6rem; height: 1.6rem; border-radius: 8px; border: 2px solid var(--crema-tenue); background: var(--cafe-950); display: grid; place-items: center; padding: 0; }
+.reto-marca[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); }
+.reto-marca[aria-pressed="true"]::before { content: "✓"; color: var(--cafe-950); font-weight: 900; }
+.reto-titulo { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; background: none; border: 0; padding: 0.15rem 0; text-align: left; }
+.reto-titulo strong { font-size: 1rem; line-height: 1.2; }
+.reto-flecha { color: var(--acento); transition: transform 0.2s; }
+.reto.abierto .reto-flecha { transform: rotate(180deg); }
+.reto-detalle { padding: 0 0.7rem 0.5rem 2.8rem; display: grid; gap: 0.2rem; }
+.reto-detalle[hidden] { display: none; }
+.reto-detalle p { font-size: 0.9rem; color: var(--crema); line-height: 1.3; }
+.reto-detalle .reto-pista { color: var(--acento-fuerte); }
+
+/* En pantallas bajas (1280×720) se compacta un poco para que todo quepa. */
+@media (max-height: 780px) {
+  .personaje-dibujo { font-size: 1.6rem; }
+  .personaje { padding-top: 0.3rem; padding-bottom: 0.35rem; }
+  .linea-personajes { margin-top: 0.15rem; }
+}
+
+/* Ventanas no muy altas (1470×800, 1366×768, 1280×720): la cabecera y los márgenes se aprietan un poco
+   para que los paneles de los personajes tengan más alto (con la burbuja de "¿Qué pasó aquí?" abierta
+   también). En 1440×900 o más alto todo queda como siempre. */
+@media (max-height: 860px) {
+  :root { --resto-derecha: 29.4rem; }
+  .barra { padding-block: 0.3rem 0.25rem; }
+  .taza { width: 2.4rem; height: 2.4rem; }
+  .marca h1 { font-size: 1.9rem; }
+  .lema { margin-top: 0; }
+  .principal, .centro, .derecha { gap: 0.55rem; }
+  .zona { padding: 0.5rem 0.75rem; }
+}
+
+/* Ventanas muy bajas (1280×720 y menos): se aprietan un poco los márgenes de los paneles para que
+   el mensaje de error y su código se vean completos. La letra de los paneles no cambia. */
+@media (max-height: 740px) {
+  .zona { padding: 0.5rem 0.7rem; }
+  .fases-zona { gap: 0.4rem; }
+  .panel { padding: 0.45rem 0.65rem; gap: 0.35rem; }
+  .burbuja { padding: 0.4rem 0.65rem; }
+  .error-caja { padding: 0.4rem 0.7rem; gap: 0.25rem; }
+  .error-explicacion { font-size: 1.25rem; }
+  .monitor-actual { font-size: 1.6rem; min-height: 2rem; }
+  .editor-zona { flex-basis: clamp(170px, 36%, 290px); gap: 0.3rem; }
+  .editor-barra .btn { padding-block: 0.35rem; }
+  .codigo { line-height: 1.4; }
+  .instruccion { padding-block: 0.08rem; }
+  .monitor-detalle { font-size: 0.92rem; min-height: 2.5em; }
+  .col-monitor { gap: 0.2rem; }
+  .monitor-detalle { min-height: 2.4em; }
+  .monitor-paso { font-size: 0.88rem; }
+  .revision { padding-block: 0.2rem; }
+  .codigo { padding-block: 0.25rem; }
+}
+
+/* Ventanas angostas (1024 px de ancho, o un zoom de 125 % o más): las columnas de los lados
+   se estrechan, las tarjetas de los personajes se compactan para que los nombres no se monten
+   entre sí ni sobre las flechas, y los botones pasan a otra línea si no caben. */
+@media (max-width: 1180px) {
+  .principal { grid-template-columns: clamp(180px, 19vw, 215px) minmax(0, 1fr) clamp(235px, 26vw, 290px); gap: 0.5rem; padding: 0 0.5rem 0.6rem; }
+  .centro, .derecha { gap: 0.5rem; }
+  .zona { padding: 0.55rem 0.65rem; }
+  .barra { padding-inline: 0.7rem; }
+  .lema { display: none; }
+  .editor-barra { flex-wrap: wrap; }
+  .zona-titulo { white-space: nowrap; }
+  .acciones .btn { white-space: nowrap; }
+  .linea-personajes { gap: 0; }
+  .flecha { width: 0.95rem; }
+  .flecha svg { width: 0.95rem; height: 0.95rem; }
+  .personaje { padding-inline: 0.1rem; }
+  .personaje-nombre { font-size: 0.82rem; overflow-wrap: anywhere; }
+  .personaje-tecnico { font-size: 0.68rem; overflow-wrap: anywhere; }
+  /* El tablero y el chat tienen poco ancho: los controles y el botón Enviar pasan debajo. */
+  .controles { flex-direction: column; align-items: stretch; gap: 0.4rem; }
+  .velocidad { flex: none; }
+  .form-chat { flex-wrap: wrap; }
+  .form-chat textarea { flex: 1 1 100%; }
+  .form-chat .btn { flex: 1 1 100%; padding-block: 0.3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

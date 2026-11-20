@@ -1,0 +1,15 @@
+node_modules/
+.DS_Store
+evidencias/
+
+# Salidas generadas por las pruebas de navegador (se regeneran al correrlas)
+pruebas/**/out/
+pruebas/**/capturas/
+pruebas/**/logs-*/
+pruebas/**/previos/
+pruebas/**/*.png
+pruebas/**/*.log
+pruebas/**/*.pid
+
+# Resultados de las corridas de prueba (solo locales)
+docs/resultados/
